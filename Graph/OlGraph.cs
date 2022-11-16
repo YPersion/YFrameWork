@@ -7,16 +7,16 @@ using System.Threading.Tasks;
 /// <summary>
 /// 弧信息
 /// </summary>
-class ArcInfo
+class OLArcInfo
 {
     //弧起点 弧尾
     public int tailVex;
     //弧终点 弧头
     public int headvex;
     //弧头相同的弧信息
-    public ArcInfo headLink;
+    public OLArcInfo headLink;
     //弧尾相同的弧信息
-    public ArcInfo tailLink;
+    public OLArcInfo tailLink;
     //其他信息
     public string other;
 }
@@ -24,15 +24,15 @@ class ArcInfo
 /// <summary>
 /// 顶点节点
 /// </summary>
-class VexNode
+class OLVexNode
 {
     public char data;
     //弧头为本顶点的首个弧信息
-    public ArcInfo firstIn;
+    public OLArcInfo firstIn;
     //弧尾为本顶点的首个弧信息
-    public ArcInfo firstOut;
+    public OLArcInfo firstOut;
 
-    public VexNode(char _data)
+    public OLVexNode(char _data)
     {
         data = _data;
     }
@@ -41,12 +41,12 @@ class VexNode
 /// <summary>
 /// 构造用弧
 /// </summary>
-public class Edge
+public class OLEdge
 {
     public char start;
     public char end;
     public int weight;
-    public Edge(char _start, char _end, int _weight)
+    public OLEdge(char _start, char _end, int _weight)
     {
         start = _start;
         end = _end;
@@ -65,23 +65,24 @@ public class OLGraph
     //弧个数
     int arcCount;
     //顶点信息
-    VexNode[] vexs;
+    OLVexNode[] vexs;
 
     /// <summary>
     /// 构造图（十字链表）
     /// </summary>
     /// <param name="vertexs">顶点信息</param>
     /// <param name="edges">构造弧信息</param>
-    public OLGraph(char[] vertexs, Edge[] edges)
+    public OLGraph(char[] vertexs, OLEdge[] edges)
     {
         vexCount = vertexs.Length;
+        if (vexCount == 0) return;
         arcCount = edges.Length;
 
-        vexs = new VexNode[vexCount];
+        vexs = new OLVexNode[vexCount];
         //初始化顶点信息
         for (int i = 0; i < vexCount; i++)
         {
-            vexs[i] = new VexNode(vertexs[i]);
+            vexs[i] = new OLVexNode(vertexs[i]);
         }
 
         char start, end;
@@ -100,7 +101,7 @@ public class OLGraph
             if (CheckAddArcInfo(startIndex, edges[i], true))
             {
                 //存储弧尾顶点信息
-                ArcInfo arc1 = new ArcInfo();
+                OLArcInfo arc1 = new OLArcInfo();
                 arc1.tailVex = startIndex;
                 arc1.headvex = endIndex;
                 arc1.tailLink = vexs[startIndex].firstOut;
@@ -111,7 +112,7 @@ public class OLGraph
             if (CheckAddArcInfo(endIndex, edges[i], false))
             {
                 //存储弧头顶点信息
-                ArcInfo arc2 = new ArcInfo();
+                OLArcInfo arc2 = new OLArcInfo();
                 arc2.tailVex = startIndex;
                 arc2.headvex = endIndex;
                 arc2.headLink = vexs[endIndex].firstIn;
@@ -129,14 +130,14 @@ public class OLGraph
     /// <param name="edge">边信息</param>
     /// <param name="isTail">是否为弧尾</param>
     /// <returns></returns>
-    private bool CheckAddArcInfo(int index, Edge edge, bool isTail)
+    private bool CheckAddArcInfo(int index, OLEdge edge, bool isTail)
     {
         if (vexs[index] == null) return false;
         if (vexs[index].firstOut == null && isTail) return true;
         if (vexs[index].firstIn == null && !isTail) return true;
         int startIndex = Array.FindIndex(vexs, (f) => f.data == edge.start);
         int endIndex = Array.FindIndex(vexs, (f) => f.data == edge.end);
-        ArcInfo arc = isTail ? vexs[index].firstOut : vexs[index].firstIn;
+        OLArcInfo arc = isTail ? vexs[index].firstOut : vexs[index].firstIn;
         if (arc == null)
         {
             return true;
@@ -160,7 +161,7 @@ public class OLGraph
     public void PrintOLGraphInfo()
     {
         Console.WriteLine("打印该图信息：");
-        ArcInfo arc = new ArcInfo();
+        OLArcInfo arc = new OLArcInfo();
         Console.WriteLine();
         Console.WriteLine("出度：");
         for (int i = 0; i < vexCount; i++)
@@ -216,10 +217,4 @@ public class OLGraph
         }
 
     }
-
-    private void PrintConsole(string str)
-    {
-        Console.WriteLine(str);
-    }
-
 }
