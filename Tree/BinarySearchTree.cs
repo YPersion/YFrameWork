@@ -124,27 +124,29 @@ public class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>
         while (true)
         {
             int comparedValue = tempNode.value.CompareTo(item);
-            //参数比根大 寻找其左子叶
-            if (comparedValue < 0)
+            //参数比根小 寻找其左子叶
+            if (comparedValue > 0)
             {
                 if (null == tempNode.lNode)
                 {
                     tempNode.lNode = new BinaryTreeNode<T>(item);
                     tempNode.lNode.parent = tempNode;
                     NodeCount++;
+                    return;
                 }
                 else
                 {
                     tempNode = tempNode.lNode;
                 }
             }
-            else if (comparedValue > 0)
+            else if (comparedValue < 0)
             {
                 if (null == tempNode.rNode)
                 {
                     tempNode.rNode = new BinaryTreeNode<T>(item);
                     tempNode.rNode.parent = tempNode;
                     NodeCount++;
+                    return;
                 }
                 else
                 {
@@ -156,7 +158,6 @@ public class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>
                 return;
             }
         }
-
 
     }
 
@@ -172,22 +173,7 @@ public class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>
 
     public bool Contains(T item)
     {
-        if (IsEmpty) return false;
-
-        BinaryTreeNode<T> tempNode = root;
-
-        while (null != tempNode)
-        {
-            int comparedValue = tempNode.value.CompareTo(item);
-            if (comparedValue == 0)
-                return true;
-            else if (comparedValue < 0)
-                //参数比根大 则在左子叶
-                tempNode = tempNode.lNode;
-            else
-                tempNode = tempNode.rNode;
-        }
-        return false;
+        return Find(item) != null;
     }
 
     public void CopyTo(T[] array, int arrayIndex)
@@ -241,7 +227,7 @@ public class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>
         {
             return false;
         }
-        
+
         bool isLeftChild = null != targetNode.parent && targetNode.parent.lNode == targetNode;
         //1.当前节点无子节点
         if (null == targetNode.lNode && root == targetNode)
@@ -301,7 +287,7 @@ public class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>
 
         }
 
-            return true;
+        return true;
     }
 
 
@@ -321,7 +307,7 @@ public class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>
             successor = AtLastLNode;
             AtLastLNode = AtLastLNode.lNode;
         }
-        
+
         //替换节点 将移除后的节点改为此后继节点
         if (successor != node.rNode)
         {
@@ -334,7 +320,7 @@ public class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>
         return successor;
     }
 
-
+    /*
     public BinaryTreeNode<T> Find(T item)
     {
         foreach (BinaryTreeNode<T> node in MidTraversal(root))
@@ -342,6 +328,29 @@ public class BinarySearchTree<T> : ICollection<T> where T : IComparable<T>
             if (null != node.value && node.value.Equals(item))
             {
                 return node;
+            }
+        }
+        return null;
+    }*/
+
+    public BinaryTreeNode<T> Find(T item)
+    {
+        BinaryTreeNode<T> tempNode = root;
+        while (null != tempNode)
+        {
+            int comparedValue = tempNode.value.CompareTo(item);
+            //参数比根小 寻找其左子叶
+            if (comparedValue > 0)
+            {
+                tempNode = tempNode.lNode;
+            }
+            else if (comparedValue < 0)
+            {
+                tempNode = tempNode.rNode;
+            }
+            else
+            {
+                return tempNode;
             }
         }
         return null;
